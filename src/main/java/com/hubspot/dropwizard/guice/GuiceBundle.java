@@ -3,6 +3,7 @@ package com.hubspot.dropwizard.guice;
 import java.util.List;
 
 import com.google.inject.*;
+import com.hubspot.dropwizard.guice.ConfigData.ConfigDataModule;
 import io.dropwizard.setup.Bootstrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
     private final List<Module> modules;
     private final List<Module> initModules;
     private final List<Function<Injector, ServletContextListener>> contextListenerGenerators;
+    private final String[] configurationPackages;
     private final InjectorFactory injectorFactory;
 
     private Injector initInjector;
@@ -45,6 +47,7 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
         private List<Function<Injector, ServletContextListener>> contextListenerGenerators = Lists.newArrayList();
         private Optional<Class<T>> configurationClass = Optional.absent();
         private InjectorFactory injectorFactory = new InjectorFactoryImpl();
+        List<String> configurationPackages = new ArrayList<>();
 
         /**
          * Add a module to the bundle.
@@ -81,6 +84,17 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
             configurationClass = Optional.of(clazz);
             return this;
         }
+
+        /**
+         * Sets a list of base packages that may contain configuration objects.
+         * When config data is bound in the injector, classes within these
+         * packages will be recursed into.
+         */
+        public Builder<T> addConfigPackages(String... basePackages) {
+            Preconditions.checkNotNull(basePackages.length > 0);
+            configurationPackages.addAll(Arrays.asList(basePackages));
+            return this;
+        }
         
         public Builder<T> setInjectorFactory(InjectorFactory factory) {
             Preconditions.checkNotNull(factory);
@@ -101,7 +115,7 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
 
         public GuiceBundle<T> build(Stage s) {
             return new GuiceBundle<>(s, autoConfig, modules, initModules, contextListenerGenerators, injectorFactory,
-                                      configurationClass);
+                                      configurationClass, configurationPackages.toArray(new String[0]));
         }
 
     }
@@ -116,17 +130,20 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
                         List<Module> initModules,
                         List<Function<Injector, ServletContextListener>> contextListenerGenerators,
 						InjectorFactory injectorFactory,
-                        Optional<Class<T>> configurationClass) {
+                        Optional<Class<T>> configurationClass,
+                        String[] configurationPackages) {
         Preconditions.checkNotNull(modules);
         Preconditions.checkArgument(!modules.isEmpty());
         Preconditions.checkNotNull(contextListenerGenerators);
         Preconditions.checkNotNull(stage);
+        Preconditions.checkNotNull(configurationPackages);
         this.modules = modules;
         this.initModules = initModules;
         this.contextListenerGenerators = contextListenerGenerators;
         this.autoConfig = autoConfig;
         this.configurationClass = configurationClass;
         this.injectorFactory = injectorFactory;
+        this.configurationPackages = configurationPackages;
         this.stage = stage;
     }
 
@@ -165,10 +182,7 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
     void run(Bootstrap<T> bootstrap, Environment environment, final T configuration) {
         initEnvironmentModule();
         setEnvironment(bootstrap, environment, configuration);
-        //The secondary injected modules generally use config data.  If we are starting up a command
-        //that doesn't have a configuration, loading these modules is useless at best.
-        boolean addModules = configuration != null;
-        initGuice(environment, addModules);
+        initGuice(environment, configuration);
         Injector injector = getInjector().get();
 
         if(environment != null) {
@@ -203,10 +217,16 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
         }
     }
 
-    private void initGuice(final Environment environment, boolean addModules) {
-        Injector environmentInjector = initInjector.createChildInjector(dropwizardEnvironmentModule);
+    @SuppressWarnings("unchecked")
+    private void initGuice(final Environment environment, T configuration) {
+        List<Module> envModules = new ArrayList<>();
+        envModules.add(dropwizardEnvironmentModule);
+        if(configuration != null) envModules.add(new ConfigDataModule(configuration, configurationPackages));
+        Injector environmentInjector = initInjector.createChildInjector(envModules);
 
-        if(addModules) {
+        //The secondary injected modules generally use config data.  If we are starting up a command
+        //that doesn't have a configuration, loading these modules is useless at best.
+        if(configuration != null) {
             for (Module module : modules)
                 environmentInjector.injectMembers(module);
 

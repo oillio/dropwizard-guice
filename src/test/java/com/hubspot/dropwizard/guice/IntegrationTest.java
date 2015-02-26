@@ -4,6 +4,7 @@ import com.google.inject.ConfigurationException;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
+import com.hubspot.dropwizard.guice.ConfigData.ConfigImpl;
 import com.hubspot.dropwizard.guice.sample.HelloWorldApplication;
 import com.hubspot.dropwizard.guice.sample.HelloWorldConfiguration;
 import com.hubspot.dropwizard.guice.sample.OtherConfig;
@@ -57,8 +58,52 @@ public class IntegrationTest {
     }
 
     @Test
+    public void nested_configuration_injection() throws Exception {
+        assertEquals("something",
+                     injector.getInstance(Key.get(String.class, new ConfigImpl("subConfig.moreData"))));
+    }
+
+    @Test
+    public void nested_configuration_outside_of_scope() {
+        OtherConfig oc = injector.getInstance(Key.get(OtherConfig.class, new ConfigImpl("otherConfig")));
+        assertEquals("hidden",oc.getOtherData());
+        //Otherconfig is not within the package scope defined by 'addConfigPackages'
+        //So its contents should not be avaliable.
+        try {
+            injector.getInstance(Key.get(String.class, new ConfigImpl("otherConfig.otherData")));
+            assertFalse(true);
+        } catch(ConfigurationException e) {
+        }
+    }
+
+    @Test
     public void dependent_module_gets_injected() throws Exception {
         assertEquals("More data is: something",
                      injector.getInstance(Key.get(String.class, Names.named("dependent"))));
+    }
+
+    @Test
+    public void nested_config_injection_in_resource() throws Exception {
+        get("/v1/hello-world/moredata1").then().body(equalTo("something"));
+    }
+
+    @Test
+    public void nested_config_injection_from_constructor_in_resource() throws Exception {
+        get("/v1/hello-world/moredata2").then().body(equalTo("something"));
+    }
+
+    @Test
+    public void nested_config_injection_with_main_root_in_resource() throws Exception {
+        get("/v1/hello-world/moredata3").then().body(equalTo("something"));
+    }
+
+    @Test
+    public void nested_config_injection_with_subroot_in_resource() throws Exception {
+        get("/v1/hello-world/moredata4").then().body(equalTo("something"));
+    }
+
+    @Test
+    public void nested_config_injection_from_subconfig_in_resource() throws Exception {
+        get("/v1/hello-world/moredata5").then().body(equalTo("something"));
     }
 }

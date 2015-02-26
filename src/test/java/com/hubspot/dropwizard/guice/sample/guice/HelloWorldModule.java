@@ -2,8 +2,7 @@ package com.hubspot.dropwizard.guice.sample.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-
-import javax.inject.Named;
+import com.hubspot.dropwizard.guice.ConfigData.Config;
 
 public class HelloWorldModule extends AbstractModule {
 	
@@ -13,7 +12,7 @@ public class HelloWorldModule extends AbstractModule {
 	}
 	
 	@Provides
-	@Named("sample")
+	@Config("sample")
 	public String provideTemplate() {
 		return "foo";
 	}

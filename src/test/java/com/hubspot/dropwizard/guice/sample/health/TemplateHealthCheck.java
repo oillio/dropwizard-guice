@@ -2,8 +2,8 @@ package com.hubspot.dropwizard.guice.sample.health;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.hubspot.dropwizard.guice.ConfigData.Config;
 import com.hubspot.dropwizard.guice.InjectableHealthCheck;
-import com.hubspot.dropwizard.guice.sample.HelloWorldConfiguration;
 
 @Singleton
 public class TemplateHealthCheck extends InjectableHealthCheck {
@@ -11,8 +11,8 @@ public class TemplateHealthCheck extends InjectableHealthCheck {
 	private final String template;
 
     @Inject
-    public TemplateHealthCheck(HelloWorldConfiguration config) {
-        this.template = config.getTemplate();
+    public TemplateHealthCheck(@Config("template") String template) {
+        this.template = template;
     }
 
     @Override

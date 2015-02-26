@@ -85,6 +85,54 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
     // you must have your health checks inherit from InjectableHealthCheck in order for them to be injected
   }
 }
+```
+Configuration data will be auto-injected and named.  Use the provided @Config annotation to specify
+the path to the configuration data to be injected.
+```java
+
+public class HelloWorldConfiguration extends Configuration {
+    @JsonProperty
+    private String template;
+
+    @JsonProperty
+    private Person defaultPerson = new Person();
+
+    public String getTemplate() { return template; }
+
+    public Person getDefaultPerson() { return defaultPerson; }
+}
+
+public class Person {
+    @JsonProperty
+    private String name = "Stranger";
+    private String city = "Unknown";
+
+    public String getName() { return name; }
+}
+
+public class HelloWorldModule extends AbstractModule {
+
+    // configuration data is available for injection and named based on the fields in the configuration objects
+    @Inject
+    @Config("template")
+    private String template;
+
+    // defaultPerson.name will only be available if the Person class is defined within the package path
+    // set by addConfigPackages (see below)
+    @Inject
+    @Config("defaultPerson.name")
+    private String defaultName;
+
+    // A root config class may also be specified.  The path provided will be relative to this root object.
+    @Inject
+    @Config(Person.class, "city")
+    private String defaultCity;
+
+    @Override
+    protected void configure() {
+    }
+}
+```
 
 Modules will also be injected before being added.  Field injections only, constructor based injections will not be available.
 Configuration data and initialization module data will be available for injecting into modules.

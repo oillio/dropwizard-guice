@@ -24,6 +24,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 			    .addModule(new DependentModule())
 				.enableAutoConfig(getClass().getPackage().getName())
 				.setConfigClass(HelloWorldConfiguration.class)
+				.addConfigPackages(SubConfig.class.getPackage().getName())
 				.build();
 
 		bootstrap.addBundle(guiceBundle);

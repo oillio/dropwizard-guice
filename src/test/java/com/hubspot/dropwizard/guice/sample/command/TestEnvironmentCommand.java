@@ -1,5 +1,6 @@
 package com.hubspot.dropwizard.guice.sample.command;
 
+import com.hubspot.dropwizard.guice.ConfigData.Config;
 import com.hubspot.dropwizard.guice.InjectedEnvironmentCommand;
 import com.hubspot.dropwizard.guice.Run;
 import com.hubspot.dropwizard.guice.sample.HelloWorldApplication;
@@ -20,10 +21,10 @@ public class TestEnvironmentCommand extends InjectedEnvironmentCommand<HelloWorl
     }
 
     @Run
-    public void run(HelloWorldConfiguration config,
+    public void run(@Config("defaultName") String name,
                     Environment environment,
                     Namespace namespace) {
-        TestEnvironmentCommand.configName = config.getDefaultName();
+        TestEnvironmentCommand.configName = name;
         TestEnvironmentCommand.environment = environment;
         TestEnvironmentCommand.namespace = namespace;
     }

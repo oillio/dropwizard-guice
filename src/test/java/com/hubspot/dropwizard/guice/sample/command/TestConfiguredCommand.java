@@ -1,5 +1,6 @@
 package com.hubspot.dropwizard.guice.sample.command;
 
+import com.hubspot.dropwizard.guice.ConfigData.Config;
 import com.hubspot.dropwizard.guice.InjectedConfiguredCommand;
 import com.hubspot.dropwizard.guice.Run;
 import com.hubspot.dropwizard.guice.sample.HelloWorldConfiguration;
@@ -16,10 +17,10 @@ public class TestConfiguredCommand extends InjectedConfiguredCommand<HelloWorldC
     }
 
     @Run
-    public void run(HelloWorldConfiguration config,
+    public void run(@Config("defaultName") String name,
                     Bootstrap bootstrap,
                     Namespace namespace) {
-        TestConfiguredCommand.configName = config.getDefaultName();
+        TestConfiguredCommand.configName = name;
         TestConfiguredCommand.bootstrap = bootstrap;
         TestConfiguredCommand.namespace = namespace;
     }
