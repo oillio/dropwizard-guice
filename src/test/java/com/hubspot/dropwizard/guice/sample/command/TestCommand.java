@@ -1,8 +1,7 @@
 package com.hubspot.dropwizard.guice.sample.command;
 
-import com.google.inject.Injector;
-import com.hubspot.dropwizard.guice.InjectedCommand;
-import com.hubspot.dropwizard.guice.Run;
+import com.hubspot.dropwizard.guice.doubleinject.InjectedCommand;
+import com.hubspot.dropwizard.guice.doubleinject.Run;
 import com.hubspot.dropwizard.guice.sample.HelloWorldConfiguration;
 import io.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.inf.Namespace;

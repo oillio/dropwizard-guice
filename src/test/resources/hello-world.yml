@@ -4,9 +4,6 @@ defaultName: Joe
 subConfig:
   moreData: something
 
-otherConfig:
-  otherData: hidden
-
 server:
   type: simple
-  applicationContextPath: /v1
+  applicationContextPath: /

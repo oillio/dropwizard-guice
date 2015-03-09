@@ -1,26 +1,27 @@
 package com.hubspot.dropwizard.guice;
 
-import java.util.List;
-
-import com.google.inject.*;
-import io.dropwizard.setup.Bootstrap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.inject.Provider;
+import com.google.inject.Stage;
+import com.hubspot.dropwizard.guice.doubleinject.GuiceCommand;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.cli.Command;
+import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.ServletContextListener;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
@@ -162,7 +163,7 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
     public void run(final T configuration, final Environment environment) {
         run(null, environment, configuration);
     }
-    void run(Bootstrap<T> bootstrap, Environment environment, final T configuration) {
+    public void run(Bootstrap<T> bootstrap, Environment environment, final T configuration) {
         initEnvironmentModule();
         setEnvironment(bootstrap, environment, configuration);
         //The secondary injected modules generally use config data.  If we are starting up a command
@@ -191,7 +192,7 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
     }
 
 
-    void setNamespace(Namespace namespace) {
+    public void setNamespace(Namespace namespace) {
         dropwizardEnvironmentModule.setNamespace(namespace);
     }
 
