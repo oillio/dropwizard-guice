@@ -1,4 +1,4 @@
-package com.hubspot.dropwizard.guice.doubleinject;
+package com.hubspot.dropwizard.guice.command;
 
 import com.hubspot.dropwizard.guice.sample.DoubleInjectApplication;
 import com.hubspot.dropwizard.guice.sample.command.TestEnvironmentCommand;

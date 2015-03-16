@@ -1,4 +1,4 @@
-package com.hubspot.dropwizard.guice.doubleinject;
+package com.hubspot.dropwizard.guice.command;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -20,7 +20,7 @@ import java.util.List;
 
 public class Utils {
     /**
-     * Used with {@link com.hubspot.dropwizard.guice.doubleinject.GuiceCommand}.  Finds a method with the {@link Run} command, injects, and runs it.
+     * Used with {@link com.hubspot.dropwizard.guice.command.GuiceCommand}.  Finds a method with the {@link Run} command, injects, and runs it.
      */
     public static void runRunnable(Object obj, final Injector injector) throws Exception {
         Optional<Method> oRun = findRunable(obj.getClass());

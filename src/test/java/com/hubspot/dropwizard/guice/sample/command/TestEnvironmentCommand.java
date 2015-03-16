@@ -1,7 +1,7 @@
 package com.hubspot.dropwizard.guice.sample.command;
 
-import com.hubspot.dropwizard.guice.doubleinject.InjectedEnvironmentCommand;
-import com.hubspot.dropwizard.guice.doubleinject.Run;
+import com.hubspot.dropwizard.guice.command.InjectedEnvironmentCommand;
+import com.hubspot.dropwizard.guice.command.Run;
 import com.hubspot.dropwizard.guice.sample.DoubleInjectApplication;
 import com.hubspot.dropwizard.guice.sample.HelloWorldConfiguration;
 import io.dropwizard.setup.Environment;

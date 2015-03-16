@@ -1,22 +1,23 @@
-package com.hubspot.dropwizard.guice.doubleinject;
+package com.hubspot.dropwizard.guice.command;
 
 import com.hubspot.dropwizard.guice.GuiceBundle;
 import io.dropwizard.Configuration;
-import io.dropwizard.cli.Command;
+import io.dropwizard.cli.ConfiguredCommand;
 import io.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.inf.Namespace;
 
 /**
  * Must be used in conjunction with the GuiceBundle.
+ * Will load the configuration based Guice modules.
  * The method annotated with {@link Run} will be injected and run when this command is called.
- * The {@link Bootstrap}, and {@link Namespace} will be available for injection.
+ * The {link Bootstrap}, {@link Namespace}, and {@link Configuration} will be available for
+ * injection.
  */
-public abstract class InjectedCommand<T extends Configuration> extends Command implements GuiceCommand<T> {
-    //I can't figure out how to get the GuiceBundle to work correctly
-    //without defining a T, which should not be necessary.
+public abstract class InjectedConfiguredCommand<T extends Configuration> extends ConfiguredCommand<T> implements GuiceCommand<T> {
     private GuiceBundle<T> init;
 
-    protected InjectedCommand(String name, String description) {
+
+    protected InjectedConfiguredCommand(String name, String description) {
         super(name, description);
     }
 
@@ -26,11 +27,12 @@ public abstract class InjectedCommand<T extends Configuration> extends Command i
     }
 
     @Override
-    final public void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
+    final protected void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
         if(init == null) throw new IllegalStateException("Injected Command run without a GuiceBundle. Was the application initialized correctly?");
 
-        init.run((Bootstrap<T>)bootstrap, null, null);
+        init.run(bootstrap, null, configuration);
         init.setNamespace(namespace);
         Utils.runRunnable(this, init.getInjector().get());
     }
 }
+

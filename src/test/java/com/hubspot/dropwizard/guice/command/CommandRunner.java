@@ -1,4 +1,4 @@
-package com.hubspot.dropwizard.guice.doubleinject;
+package com.hubspot.dropwizard.guice.command;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;

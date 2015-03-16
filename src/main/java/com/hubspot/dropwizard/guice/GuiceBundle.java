@@ -9,7 +9,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Stage;
-import com.hubspot.dropwizard.guice.doubleinject.GuiceCommand;
+import com.hubspot.dropwizard.guice.command.GuiceCommand;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.cli.Command;

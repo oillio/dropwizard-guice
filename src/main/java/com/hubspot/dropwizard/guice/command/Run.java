@@ -1,4 +1,4 @@
-package com.hubspot.dropwizard.guice.doubleinject;
+package com.hubspot.dropwizard.guice.command;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
