@@ -29,5 +29,4 @@ public class DependentModule extends AbstractModule {
     public ConfigEnvDBI provideDBI(HelloWorldConfiguration helloWorldConfiguration, Environment environment) {
         return new ConfigEnvDBI(helloWorldConfiguration, environment);
     }
-
 }

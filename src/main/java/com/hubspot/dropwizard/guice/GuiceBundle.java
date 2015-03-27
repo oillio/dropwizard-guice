@@ -5,10 +5,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.inject.Provider;
-import com.google.inject.Stage;
+import com.google.inject.*;
 import com.hubspot.dropwizard.guice.command.GuiceCommand;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
@@ -20,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContextListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -208,11 +206,17 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
         Injector environmentInjector = initInjector.createChildInjector(dropwizardEnvironmentModule);
 
         if(addModules) {
+            List<Module> validModules = new ArrayList<>();
             for (Module module : modules)
-                environmentInjector.injectMembers(module);
+                try {
+                    environmentInjector.injectMembers(module);
+                    validModules.add(module);
+                } catch(ProvisionException e) {
+                    logger.warn("Module {} could not be initialized.  It has been ignored.", module.getClass().getName());
+                }
 
-            if (environment != null) modules.add(new JerseyModule());
-            finalInjector = environmentInjector.createChildInjector(ImmutableList.copyOf(modules));
+            if (environment != null) validModules.add(new JerseyModule());
+            finalInjector = environmentInjector.createChildInjector(ImmutableList.copyOf(validModules));
         }
         else finalInjector = environmentInjector;
     }
