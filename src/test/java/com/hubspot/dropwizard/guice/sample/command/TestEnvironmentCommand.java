@@ -1,8 +1,8 @@
 package com.hubspot.dropwizard.guice.sample.command;
 
-import com.hubspot.dropwizard.guice.InjectedEnvironmentCommand;
-import com.hubspot.dropwizard.guice.Run;
-import com.hubspot.dropwizard.guice.sample.HelloWorldApplication;
+import com.hubspot.dropwizard.guice.command.InjectedEnvironmentCommand;
+import com.hubspot.dropwizard.guice.command.Run;
+import com.hubspot.dropwizard.guice.sample.DoubleInjectApplication;
 import com.hubspot.dropwizard.guice.sample.HelloWorldConfiguration;
 import io.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -15,7 +15,7 @@ public class TestEnvironmentCommand extends InjectedEnvironmentCommand<HelloWorl
     public static Namespace namespace;
 
     @Inject
-    public TestEnvironmentCommand(HelloWorldApplication app) {
+    public TestEnvironmentCommand(DoubleInjectApplication app) {
         super(app, "TestEnvironmentCommand", "A command that does not do much.");
     }
 

@@ -46,9 +46,8 @@
     </developers>
 
     <properties>
-        <io.dropwizard.version>0.8.0-rc3</io.dropwizard.version>
+        <io.dropwizard.version>0.8.0</io.dropwizard.version>
     </properties>
-
 
     <dependencies>
         <dependency>

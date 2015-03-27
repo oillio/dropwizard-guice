@@ -2,7 +2,7 @@ package com.hubspot.dropwizard.guice;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Injector;
-import com.hubspot.dropwizard.guice.objects.TestModule;
+import com.hubspot.dropwizard.guice.sample.guice.HelloWorldModule;
 import com.squarespace.jersey2.guice.BootstrapUtils;
 import io.dropwizard.Configuration;
 import io.dropwizard.jackson.Jackson;
@@ -40,7 +40,7 @@ public class GuiceBundleTest {
         //given
         environment = new Environment("test env", Jackson.newObjectMapper(), null, null, null);
         guiceBundle = GuiceBundle.newBuilder()
-                .addModule(new TestModule())
+                .addModule(new HelloWorldModule())
                 .build();
         Bootstrap bootstrap = mock(Bootstrap.class);
         when(bootstrap.getCommands()).thenReturn(ImmutableList.of());

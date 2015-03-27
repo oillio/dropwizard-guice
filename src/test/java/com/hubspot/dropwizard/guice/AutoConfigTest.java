@@ -3,7 +3,16 @@ package com.hubspot.dropwizard.guice;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.hubspot.dropwizard.guice.objects.*;
+import com.hubspot.dropwizard.guice.sample.SingleInjectApplication;
+import com.hubspot.dropwizard.guice.sample.bundle.InjectedBundle;
+import com.hubspot.dropwizard.guice.sample.guice.HelloWorldModule;
+import com.hubspot.dropwizard.guice.sample.health.InjectedHealthCheck;
+import com.hubspot.dropwizard.guice.sample.jersey.InjectedProvider;
+import com.hubspot.dropwizard.guice.sample.managed.InjectedManaged;
+import com.hubspot.dropwizard.guice.sample.resources.ExplicitResource;
+import com.hubspot.dropwizard.guice.sample.resources.JitResource;
+import com.hubspot.dropwizard.guice.sample.resources.ResourceInterface;
+import com.hubspot.dropwizard.guice.sample.task.InjectedTask;
 import io.dropwizard.Bundle;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.lifecycle.Managed;
@@ -27,7 +36,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class AutoConfigTest {
 
-    private final Injector injector = Guice.createInjector(new TestModule());
+    private final Injector injector = Guice.createInjector(new HelloWorldModule());
 
     @Spy
     private Environment environment = new Environment("test env", Jackson.newObjectMapper(), null, null, null);
@@ -36,7 +45,7 @@ public class AutoConfigTest {
     @Before
     public void setUp() {
         //when
-        autoConfig = new AutoConfig(TestModule.class.getPackage().getName());
+        autoConfig = new AutoConfig(SingleInjectApplication.class.getPackage().getName());
     }
 
     @Test

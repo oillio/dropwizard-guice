@@ -1,9 +1,9 @@
 package com.hubspot.dropwizard.guice;
 
 import com.google.common.io.Resources;
-import com.hubspot.dropwizard.guice.objects.TestApplication;
+import com.hubspot.dropwizard.guice.sample.HelloWorldConfiguration;
+import com.hubspot.dropwizard.guice.sample.SingleInjectApplication;
 import com.squarespace.jersey2.guice.BootstrapUtils;
-import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.AfterClass;
@@ -19,8 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class InjectedIntegrationTest {
 
     @ClassRule
-    public static final DropwizardAppRule<Configuration> RULE =
-            new DropwizardAppRule<>(TestApplication.class, resourceFilePath("test-config.yml"));
+    public static final DropwizardAppRule<HelloWorldConfiguration> RULE =
+            new DropwizardAppRule<>(SingleInjectApplication.class, resourceFilePath("hello-world.yml"));
 
     protected static Client client;
 

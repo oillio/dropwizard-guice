@@ -1,7 +1,6 @@
 package com.hubspot.dropwizard.guice.sample;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.hubspot.dropwizard.guice.sample.config.SubConfig;
 import io.dropwizard.Configuration;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -15,10 +14,7 @@ public class HelloWorldConfiguration extends Configuration {
     private String defaultName = "Stranger";
 
     @JsonProperty
-    private SubConfig subConfig;
-
-    @JsonProperty
-    private OtherConfig otherConfig;
+    private SubConfiguration subConfig;
 
     public String getTemplate() {
         return template;
@@ -28,7 +24,5 @@ public class HelloWorldConfiguration extends Configuration {
         return defaultName;
     }
 
-    public SubConfig getSubConfig() { return subConfig; }
-
-    public OtherConfig getOtherConfig() { return otherConfig; }
+    public SubConfiguration getSubConfig() { return subConfig; }
 }

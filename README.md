@@ -85,6 +85,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
     // you must have your health checks inherit from InjectableHealthCheck in order for them to be injected
   }
 }
+```
 
 Modules will also be injected before being added.  Field injections only, constructor based injections will not be available.
 Configuration data and initialization module data will be available for injecting into modules.
