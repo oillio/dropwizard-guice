@@ -29,6 +29,7 @@ import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Set;
 
@@ -79,7 +80,7 @@ public class AutoConfig {
         environment.lifecycle().manage(injector.getInstance(managed));
         logger.info("Added managed: {}", managed);
       } catch (ConfigurationException e) {
-        logger.warn("Could not get instance of managed: {}", managed);
+        logger.warn("Could not get instance of managed: {}", managed, e);
       }
     }
   }
@@ -92,7 +93,7 @@ public class AutoConfig {
         environment.admin().addTask(injector.getInstance(task));
         logger.info("Added task: {}", task);
       } catch (ConfigurationException e) {
-        logger.warn("Could not get instance of task: {}", task);
+        logger.warn("Could not get instance of task: {}", task, e);
       }
     }
   }
@@ -106,7 +107,7 @@ public class AutoConfig {
         environment.healthChecks().register(instance.getName(), instance);
         logger.info("Added injectableHealthCheck: {}", healthCheck);
       } catch (ConfigurationException e) {
-        logger.warn("Could not get instance of InjectableHealthCheck: {}", healthCheck);
+        logger.warn("Could not get instance of InjectableHealthCheck: {}", healthCheck, e);
       }
     }
   }
@@ -140,21 +141,29 @@ public class AutoConfig {
         bootstrap.addBundle(injector.getInstance(bundle));
         logger.info("Added bundle class {} during bootstrap", bundle);
       } catch (ConfigurationException e) {
-        logger.warn("Could not get instance of bundle: {}", bundle);
+        logger.warn("Could not get instance of bundle: {}", bundle, e);
       }
     }
     Set<Class<? extends ConfiguredBundle>> configuredBundleClasses =
         reflections.getSubTypesOf(ConfiguredBundle.class);
     for (Class<? extends ConfiguredBundle> bundle : configuredBundleClasses) {
-      if (!bundle.equals(GuiceBundle.class)) {
+      if (bundle.equals(GuiceBundle.class)) {
+          continue;
+      } else if (!isInjectable(bundle)) {
+          logger.warn("Ignoring bundle class {}: non-static inner class", bundle);
+      } else {
         try {
           bootstrap.addBundle(injector.getInstance(bundle));
           logger.info("Added configured bundle class {} during bootstrap", bundle);
         } catch (ConfigurationException e) {
-          logger.warn("Could not get instance of configured bundle: {}", bundle);
+          logger.warn("Could not get instance of configured bundle: {}", bundle, e);
         }
       }
     }
+  }
+
+  private static boolean isInjectable(Class<?> clazz) {
+    return clazz.getEnclosingClass() == null || Modifier.isStatic(clazz.getModifiers());
   }
 
   private void addCommands(Bootstrap<?> bootstrap, Injector injector) {
@@ -184,7 +193,7 @@ public class AutoConfig {
         bootstrap.addCommand(injector.getInstance(command));
         logger.info("Added command class {} during bootstrap", command);
       } catch (ConfigurationException e) {
-        logger.warn("Could not get instance of command: {}", command);
+        logger.warn("Could not get instance of command: {}", command, e);
       }
     }
   }
