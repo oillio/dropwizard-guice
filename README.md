@@ -67,6 +67,9 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
       .build();
 
     bootstrap.addBundle(guiceBundle);
+    // with AutoConfig enabled you don't need to add bundles or commands explicitly here.
+    // inherit from one of InjectedCommand, InjectedConfiguredCommand, or InjectedEnvironmentCommand
+    // to get access to all modules during injection.
   }
 
   @Override
@@ -78,6 +81,46 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
   public void run(HelloWorldConfiguration helloWorldConfiguration, Environment environment) throws Exception {
     // now you don't need to add resources, tasks, healthchecks or providers
     // you must have your health checks inherit from InjectableHealthCheck in order for them to be injected
+  }
+}
+```
+
+Modules will also be injected before being added.  Field injections only, constructor based injections will not be available.
+Configuration data and initialization module data will be available for injecting into modules.
+```java
+
+
+public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
+
+  public static void main(String[] args) throws Exception {
+    new HelloWorldApplication().run(args);
+  }
+
+  @Override
+  public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
+
+    GuiceBundle<HelloWorldConfiguration> guiceBundle = GuiceBundle.<HelloWorldConfiguration>newBuilder()
+      .addInitModule(new BaseModule())
+      // bindings defined in the BaseModule or any configuration data is available for
+      // injection into HelloWorldModule fields
+      .addModule(new HelloWorldModule())
+      //Any resource, task, bundle, etc within this class path will be included automatically.
+      .enableAutoConfig(getClass().getPackage().getName())
+      //The contents of any config objects within this package path will be auto-injected.
+      .addConfigPackages(getClass().getPackage().getName())
+      .setConfigClass(HelloWorldConfiguration.class)
+      .build();
+
+    bootstrap.addBundle(guiceBundle);
+  }
+
+  @Override
+  public String getName() {
+    return "hello-world";
+  }
+
+  @Override
+  public void run(HelloWorldConfiguration helloWorldConfiguration, Environment environment) throws Exception {
   }
 }
 ```
@@ -105,6 +148,8 @@ And bind the TaskName in your module:
 See the test cases: `InjectedTask` and `TestModule` for more details.
 
 ## Environment and Configuration
+=======
+
 If you are having trouble accessing your Configuration or Environment inside a Guice Module, you could try using a provider.
 
 ```java

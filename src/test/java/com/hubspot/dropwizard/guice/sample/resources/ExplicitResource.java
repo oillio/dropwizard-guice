@@ -1,4 +1,6 @@
-package com.hubspot.dropwizard.guice.objects;
+package com.hubspot.dropwizard.guice.sample.resources;
+
+import com.hubspot.dropwizard.guice.sample.db.ExplicitDAO;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -14,7 +16,7 @@ public class ExplicitResource {
 
     @Inject
     public ExplicitResource(ExplicitDAO dao) {
-        this.dao = dao;;
+        this.dao = dao;
     }
 
     @GET

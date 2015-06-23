@@ -1,10 +1,8 @@
 package com.hubspot.dropwizard.guice;
 
-import com.hubspot.dropwizard.guice.objects.ExplicitDAO;
-import com.hubspot.dropwizard.guice.objects.ExplicitResource;
-import com.squarespace.jersey2.guice.BootstrapUtils;
+import com.hubspot.dropwizard.guice.sample.db.ExplicitDAO;
+import com.hubspot.dropwizard.guice.sample.resources.ExplicitResource;
 import io.dropwizard.testing.junit.ResourceTestRule;
-import org.junit.AfterClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.hubspot.dropwizard.guice.objects;
+package com.hubspot.dropwizard.guice.sample.resources;
 
 import javax.ws.rs.Path;
 

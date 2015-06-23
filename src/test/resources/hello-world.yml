@@ -1,0 +1,9 @@
+template: Hello, %s!
+defaultName: Joe
+
+subConfig:
+  moreData: something
+
+server:
+  type: simple
+  applicationContextPath: /

@@ -1,7 +1,8 @@
 package com.hubspot.dropwizard.guice;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Injector;
-import com.hubspot.dropwizard.guice.objects.TestModule;
+import com.hubspot.dropwizard.guice.sample.guice.HelloWorldModule;
 import com.squarespace.jersey2.guice.BootstrapUtils;
 import io.dropwizard.Configuration;
 import io.dropwizard.jackson.Jackson;
@@ -19,6 +20,7 @@ import javax.servlet.ServletException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GuiceBundleTest {
@@ -38,9 +40,10 @@ public class GuiceBundleTest {
         //given
         environment = new Environment("test env", Jackson.newObjectMapper(), null, null, null);
         guiceBundle = GuiceBundle.newBuilder()
-                .addModule(new TestModule())
+                .addModule(new HelloWorldModule())
                 .build();
         Bootstrap bootstrap = mock(Bootstrap.class);
+        when(bootstrap.getCommands()).thenReturn(ImmutableList.of());
         guiceBundle.initialize(bootstrap);
         guiceBundle.run(new Configuration(), environment);
     }
@@ -48,13 +51,13 @@ public class GuiceBundleTest {
     @Test
     public void createsInjectorWhenInit() throws ServletException {
         //then
-        Injector injector = guiceBundle.getInjector();
+        Injector injector = guiceBundle.getInjector().get();
         assertThat(injector).isNotNull();
     }
 
     @Test
     public void serviceLocatorIsAvaliable () throws ServletException {
-        ServiceLocator serviceLocator = guiceBundle.getInjector().getInstance(ServiceLocator.class);
+        ServiceLocator serviceLocator = guiceBundle.getInjector().get().getInstance(ServiceLocator.class);
         assertThat(serviceLocator).isNotNull();
     }
 }

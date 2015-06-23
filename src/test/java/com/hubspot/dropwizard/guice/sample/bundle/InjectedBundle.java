@@ -1,4 +1,4 @@
-package com.hubspot.dropwizard.guice.objects;
+package com.hubspot.dropwizard.guice.sample.bundle;
 
 import io.dropwizard.Bundle;
 import io.dropwizard.setup.Bootstrap;

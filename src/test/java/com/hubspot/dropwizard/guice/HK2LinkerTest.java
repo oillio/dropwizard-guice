@@ -2,9 +2,9 @@ package com.hubspot.dropwizard.guice;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.hubspot.dropwizard.guice.objects.ExplicitResource;
-import com.hubspot.dropwizard.guice.objects.JitResource;
-import com.hubspot.dropwizard.guice.objects.TestModule;
+import com.hubspot.dropwizard.guice.sample.guice.HelloWorldModule;
+import com.hubspot.dropwizard.guice.sample.resources.ExplicitResource;
+import com.hubspot.dropwizard.guice.sample.resources.JitResource;
 import com.squarespace.jersey2.guice.BootstrapUtils;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.junit.AfterClass;
@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class HK2LinkerTest {
 
-    final Injector injector = Guice.createInjector(new JerseyModule(), new TestModule());
+    final Injector injector = Guice.createInjector(new JerseyModule(), new HelloWorldModule());
     final ServiceLocator serviceLocator = injector.getInstance(ServiceLocator.class);
 
     @AfterClass

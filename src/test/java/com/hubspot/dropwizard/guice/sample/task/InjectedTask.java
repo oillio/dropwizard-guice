@@ -1,4 +1,4 @@
-package com.hubspot.dropwizard.guice.objects;
+package com.hubspot.dropwizard.guice.sample.task;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.Singleton;

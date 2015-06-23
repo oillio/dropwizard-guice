@@ -1,4 +1,4 @@
-package com.hubspot.dropwizard.guice.objects;
+package com.hubspot.dropwizard.guice.sample.db;
 
 public class ExplicitDAO {
 

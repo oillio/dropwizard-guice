@@ -1,4 +1,6 @@
-package com.hubspot.dropwizard.guice.objects;
+package com.hubspot.dropwizard.guice.sample.resources;
+
+import com.hubspot.dropwizard.guice.sample.db.JitDAO;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
