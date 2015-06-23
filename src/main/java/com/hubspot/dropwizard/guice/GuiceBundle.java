@@ -124,7 +124,7 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
                         List<Module> modules,
                         List<Module> initModules,
                         List<Function<Injector, ServletContextListener>> contextListenerGenerators,
-						InjectorFactory injectorFactory,
+                        InjectorFactory injectorFactory,
                         Optional<Class<T>> configurationClass) {
         Preconditions.checkNotNull(modules);
         Preconditions.checkArgument(!modules.isEmpty());
@@ -162,16 +162,17 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
     private void initInjector() {
         try {
             initInjector = injectorFactory.create(this.stage, ImmutableList.copyOf(this.initModules));
-        } catch(Exception ie) {
-		    logger.error("Exception occurred when creating Guice Injector - exiting", ie);
-		    System.exit(1);
-	    }
+        } catch (Exception ie) {
+            logger.error("Exception occurred when creating Guice Injector - exiting", ie);
+            System.exit(1);
+        }
     }
 
     @Override
     public void run(final T configuration, final Environment environment) {
         run(null, environment, configuration);
     }
+
     public void run(Bootstrap<T> bootstrap, Environment environment, final T configuration) {
         initEnvironmentModule();
         setEnvironment(bootstrap, environment, configuration);
@@ -181,7 +182,7 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
         initGuice(environment, addModules);
         Injector injector = getInjector().get();
 
-        if(environment != null) {
+        if (environment != null) {
             JerseyUtil.registerGuiceBound(injector, environment.jersey());
             JerseyUtil.registerGuiceFilter(environment);
 
@@ -216,20 +217,24 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
     private void initGuice(final Environment environment, boolean addModules) {
         Injector environmentInjector = initInjector.createChildInjector(dropwizardEnvironmentModule);
 
-        if(addModules) {
+        if (addModules) {
             List<Module> validModules = new ArrayList<>();
-            for (Module module : modules)
+            for (Module module : modules) {
                 try {
                     environmentInjector.injectMembers(module);
                     validModules.add(module);
-                } catch(ProvisionException e) {
+                } catch (ProvisionException e) {
                     logger.warn("Module {} could not be initialized.  It has been ignored.", module.getClass().getName());
                 }
+            }
 
-            if (environment != null) validModules.add(new JerseyModule());
+            if (environment != null) {
+                validModules.add(new JerseyModule());
+            }
             finalInjector = environmentInjector.createChildInjector(ImmutableList.copyOf(validModules));
+        } else {
+            finalInjector = environmentInjector;
         }
-        else finalInjector = environmentInjector;
     }
 
     public Provider<Injector> getInjector() {

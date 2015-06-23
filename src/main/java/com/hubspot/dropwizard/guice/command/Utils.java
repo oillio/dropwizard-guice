@@ -24,7 +24,9 @@ public class Utils {
      */
     public static void runRunnable(Object obj, final Injector injector) throws Exception {
         Optional<Method> oRun = findRunable(obj.getClass());
-        if(!oRun.isPresent()) throw new IllegalStateException("No runnable method found.  @Run annotation must be applied to a method.");
+        if(!oRun.isPresent()) {
+            throw new IllegalStateException("No runnable method found.  @Run annotation must be applied to a method.");
+        }
         Method run = oRun.get();
 
         Errors errors = new Errors(run);
@@ -40,10 +42,13 @@ public class Utils {
     }
 
     private static Optional<Method> findRunable(Class<?> klass) {
-        if(klass == Object.class) return Optional.absent();
+        if(klass == Object.class) {
+            return Optional.absent();
+        }
         for (Method method : klass.getMethods()) {
-            if (method.getAnnotation(Run.class) != null)
+            if (method.getAnnotation(Run.class) != null) {
                 return Optional.of(method);
+            }
         }
         return findRunable(klass.getSuperclass());
     }
