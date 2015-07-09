@@ -1,10 +1,12 @@
 package com.hubspot.dropwizard.guice.command;
 
 import com.hubspot.dropwizard.guice.GuiceBundle;
+
+import net.sourceforge.argparse4j.inf.Namespace;
+
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.Command;
 import io.dropwizard.setup.Bootstrap;
-import net.sourceforge.argparse4j.inf.Namespace;
 
 /**
  * Must be used in conjunction with the GuiceBundle.
@@ -26,8 +28,10 @@ public abstract class InjectedCommand<T extends Configuration> extends Command i
     }
 
     @Override
-    final public void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
-        if(init == null) throw new IllegalStateException("Injected Command run without a GuiceBundle. Was the application initialized correctly?");
+    public final void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
+        if (init == null) {
+            throw new IllegalStateException("Injected Command run without a GuiceBundle. Was the application initialized correctly?");
+        }
 
         init.run((Bootstrap<T>)bootstrap, null, null);
         init.setNamespace(namespace);

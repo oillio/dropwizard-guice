@@ -1,18 +1,15 @@
-Dropwizard-Guice
-================
-
+# Dropwizard-Guice
 A simple DropWizard extension for integrating Guice via a bundle. It optionally uses classpath 
 scanning courtesy of the Reflections project to discover resources and more to install into 
 the dropwizard environment upon service start.
 
-### Usage
-
+## Usage
 ```xml
     <dependencies>
         <dependency>
             <groupId>com.hubspot.dropwizard</groupId>
             <artifactId>dropwizard-guice</artifactId>
-            <version>0.7.0.2</version>
+            <version>0.8.X</version>
         </dependency>
     </dependencies>
 ```
@@ -51,6 +48,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 }
 ```
 
+## Auto Configuration
 You can enable auto configuration via package scanning.
 ```java
 public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
@@ -127,6 +125,31 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 }
 ```
 
+Dropwizard `Task` requires a TaskName. Therefore when Auto Configuring a `Task`, you need to inject in the TaskName:
+
+    @Singleton
+    public class MyTask extends Task {
+
+        @Inject
+        protected MyTask(@Named("MyTaskName") String name) {
+            super(name);
+        }
+
+        @Override
+        public void execute(ImmutableMultimap<String, String> immutableMultimap, PrintWriter printWriter) throws Exception {
+
+        }
+    }
+
+And bind the TaskName in your module:
+
+    bindConstant().annotatedWith(Names.named("MyTaskName")).to("my awesome task");
+
+See the test cases: `InjectedTask` and `TestModule` for more details.
+
+## Environment and Configuration
+=======
+
 If you are having trouble accessing your Configuration or Environment inside a Guice Module, you could try using a provider.
 
 ```java
@@ -149,21 +172,10 @@ public class HelloWorldModule extends AbstractModule {
 }
 ```
 
+## Injector Factory
 You can also replace the default Guice `Injector` by implementing your own `InjectorFactory`. For example if you want 
-to use [Governator](https://github.com/Netflix/governator) you can create the following implementation:
-
-```java
-public class GovernatorInjectorFactory implements InjectorFactory {
-
-  @Override
-  public Injector create( final Stage stage, final List<Module> modules ) {
-    return LifecycleInjector.builder().inStage( stage ).withModules( modules ).build()
-        .createInjector();
-  }
-}
-```
-
-and then set the InjectorFactory when initializing the GuiceBundle:
+to use [Governator](https://github.com/Netflix/governator), you can set the following InjectorFactory (using Jav8 Lambda)
+when initializing the GuiceBundle:
 
 ```java
 @Override
@@ -173,13 +185,26 @@ public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
     .addModule(new HelloWorldModule())
     .enableAutoConfig(getClass().getPackage().getName())
     .setConfigClass(HelloWorldConfiguration.class)
-    .setInjectorFactory( new GovernatorInjectorFactory() )
+    .setInjectorFactory((stage, modules) -> LifecycleInjector.builder()
+        .inStage(stage)
+        .withModules(modules)
+        .build()
+        .createInjector()))
     .build();
 
  bootstrap.addBundle(guiceBundle);
 }
 ```
 
+## Testing
+As of Dropwizard 0.8.x, when writing Integration Tests using `DropwizardAppRule`, you need to reset
+[jersey2-guice](https://github.com/Squarespace/jersey2-guice) by running:
+
+    BootstrapUtils.reset();
+
+## Examples
 Please fork [an example project](https://github.com/eliast/dropwizard-guice-example) if you'd like to get going right away. 
+
+You may also find more updated and comprehensive examples in the [test cases](https://github.com/HubSpot/dropwizard-guice/tree/master/src/test).
 
 Enjoy!

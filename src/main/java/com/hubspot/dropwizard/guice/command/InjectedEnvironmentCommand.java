@@ -1,11 +1,13 @@
 package com.hubspot.dropwizard.guice.command;
 
 import com.hubspot.dropwizard.guice.GuiceBundle;
+
+import net.sourceforge.argparse4j.inf.Namespace;
+
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.EnvironmentCommand;
 import io.dropwizard.setup.Environment;
-import net.sourceforge.argparse4j.inf.Namespace;
 
 /**
  * Must be used in conjunction with the GuiceBundle.
@@ -28,7 +30,9 @@ public abstract class InjectedEnvironmentCommand<T extends Configuration> extend
 
     @Override
     protected void run(Environment environment, Namespace namespace, T configuration) throws Exception {
-        if(init == null) throw new IllegalStateException("Injected Command run without a GuiceBundle. Was the application initialized correctly?");
+        if (init == null) {
+            throw new IllegalStateException("Injected Command run without a GuiceBundle. Was the application initialized correctly?");
+        }
 
         //We do not need to run init here, as it was already run by the Dropwizard environment initializer.
         init.setNamespace(namespace);
